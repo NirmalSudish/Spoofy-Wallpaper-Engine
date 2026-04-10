@@ -1,0 +1,206 @@
+{
+  "title": "Spotify Lyrics Visualizer",
+  "description": "A live Spotify lyrics visualizer with WebGL effects, real-time audio reactivity, and mood-adaptive visuals.\n\nFeatures:\n• Synced lyrics pulled automatically from lrclib.net\n• Audio visualizer that reacts to the music's bass, mids, and highs\n• Album art display with mood-colored glow\n• Play / Pause / Skip controls built in\n• Smooth WebGL feedback trails, glow, and distortion effects\n• Mouse hover effect — letters part as your cursor moves through them\n• Fully customizable via the Wallpaper Engine settings panel\n\nRequires the Spotify Bridge companion app to be running. Download link and setup guide in the comments.",
+  "preview": "preview.jpg",
+  "type": "web",
+  "file": "index.html",
+  "general": {
+    "supportsaudioprocessing": true,
+    "properties": {
+      "showdebug": {
+        "title": "Show Debug Overlay",
+        "text": "Show debug overlay with FPS, mood, and audio levels",
+        "type": "bool",
+        "value": false
+      },
+      "demomode": {
+        "title": "Demo Mode",
+        "text": "Use built-in demo lyrics (useful without the Spotify bridge)",
+        "type": "bool",
+        "value": false
+      },
+      "feedbackdecay": {
+        "title": "Trail / Ghost Intensity",
+        "text": "How strongly the feedback trail persists (0 = off, 1 = heavy)",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "value": 0.88
+      },
+      "glowstrength": {
+        "title": "Glow Strength",
+        "text": "Bloom / glow intensity on the lyric text",
+        "type": "slider",
+        "min": 0,
+        "max": 4,
+        "step": 0.1,
+        "value": 1.2
+      },
+      "basefontsize": {
+        "title": "Base Font Size",
+        "text": "Font size in px at 1920×1080 resolution",
+        "type": "slider",
+        "min": 24,
+        "max": 120,
+        "step": 2,
+        "value": 52
+      },
+      "distortionamount": {
+        "title": "Distortion Amount",
+        "text": "Controls displacement / liquid warp strength",
+        "type": "slider",
+        "min": 0,
+        "max": 0.1,
+        "step": 0.001,
+        "value": 0.012
+      },
+      "refractionstrength": {
+        "title": "Liquid Refraction",
+        "text": "Text appears to float on a rippling liquid surface — noise-gradient lens distortion",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "persptilt": {
+        "title": "3D Perspective Tilt",
+        "text": "Animates the text on a slowly rotating 3D plane — depth parallax included",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "causticsintensity": {
+        "title": "Caustic Patterns",
+        "text": "Animated light-through-water caustic shimmer across the whole scene",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "iridescence": {
+        "title": "Iridescent Shimmer",
+        "text": "Holographic prismatic sweep band across the lyric text",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "godrays": {
+        "title": "God Rays",
+        "text": "Volumetric light shafts radiating outward from the text center",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "extrusiondepth": {
+        "title": "3D Text Extrusion",
+        "text": "Depth layers behind the text for a floating 3D extrusion — direction rotates over time",
+        "type": "slider",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "value": 0
+      },
+      "hovereffect": {
+        "title": "Mouse Hover Effect",
+        "text": "Lyric text parts around your cursor using Pretext layout engine (requires Mouse Interaction enabled in WE settings)",
+        "type": "bool",
+        "value": true
+      },
+      "hoverradius": {
+        "title": "Hover Gap Size",
+        "text": "How wide the cursor parting gap is (px)",
+        "type": "slider",
+        "min": 20,
+        "max": 180,
+        "step": 5,
+        "value": 80
+      },
+      "entrancestyle": {
+        "title": "Text Entrance Style",
+        "text": "How each new lyric line appears on screen",
+        "type": "combo",
+        "options": [
+          { "label": "Sweep (left to right)", "value": "sweep" },
+          { "label": "Rise (slide up)", "value": "rise" },
+          { "label": "Wave (characters undulate)", "value": "wave" },
+          { "label": "Typewriter (char by char)", "value": "typewriter" }
+        ],
+        "value": "sweep"
+      },
+      "outlinewidth": {
+        "title": "Text Outline Width",
+        "text": "Glowing mood-colored stroke around the lyrics (0 = off)",
+        "type": "slider",
+        "min": 0,
+        "max": 4,
+        "step": 0.5,
+        "value": 0
+      },
+      "waveamplitude": {
+        "title": "Wave Amplitude",
+        "text": "Peak character wave height in pixels (used by Wave entrance style)",
+        "type": "slider",
+        "min": 4,
+        "max": 40,
+        "step": 2,
+        "value": 14
+      },
+      "beatpulse": {
+        "title": "Beat Pulse Rings",
+        "text": "Expanding rings that radiate outward from the text on bass hits",
+        "type": "bool",
+        "value": false
+      },
+      "outerglow": {
+        "title": "Outer Aura Intensity",
+        "text": "Soft wide halo around the lyric text (0 = off, 3 = strong)",
+        "type": "slider",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "value": 1.0
+      },
+      "scanlineintensity": {
+        "title": "Scanline Intensity",
+        "text": "CRT-style horizontal scanline overlay (0 = off)",
+        "type": "slider",
+        "min": 0,
+        "max": 0.8,
+        "step": 0.05,
+        "value": 0
+      },
+      "rainbowintensity": {
+        "title": "Rainbow Text",
+        "text": "Prismatic hue-cycling color across the lyric text (0 = off)",
+        "type": "slider",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "value": 0
+      },
+      "schemeid": {
+        "title": "Color Scheme Override",
+        "text": "Force a specific mood color (0 = auto from lyrics)",
+        "type": "combo",
+        "options": [
+          { "label": "Auto (from lyrics)", "value": "auto" },
+          { "label": "Euphoric – Magenta", "value": "euphoric" },
+          { "label": "Joyful – Gold", "value": "joyful" },
+          { "label": "Calm – Blue", "value": "calm" },
+          { "label": "Sad – Indigo", "value": "sad" },
+          { "label": "Intense – Red", "value": "intense" }
+        ],
+        "value": "auto"
+      }
+    }
+  }
+}

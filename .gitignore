@@ -1,0 +1,4 @@
+node_modules/
+.spotify-token.json
+spotify-bridge.exe
+.DS_Store

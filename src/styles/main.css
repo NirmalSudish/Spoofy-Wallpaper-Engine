@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@200;400;700&display=swap');
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  overflow: hidden;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  user-select: none;
+  cursor: none;
+}
+
+/* WebGL canvas — full screen, bottom layer */
+#glCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  display: block;
+}
+
+/* Text canvas — hidden; used only as WebGL texture source */
+#textCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* HUD — track/artist overlay (sits well above the Windows taskbar) */
+#hud {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  text-align: center;
+  pointer-events: none;  /* re-enabled only for controls below */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 600px;
+}
+
+/* Let clicks reach the control buttons */
+#hud-controls {
+  pointer-events: all;
+  cursor: default;
+}
+
+#hud-controls button {
+  cursor: pointer;
+}
+
+/* Album art */
+#hud-album-art {
+  width: 360px;
+  height: 360px;
+  border-radius: 24px;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.8s ease, box-shadow 1.2s ease;
+  box-shadow: 0 0 32px rgba(100, 140, 255, 0.35), 0 6px 24px rgba(0,0,0,0.65);
+  margin-bottom: 6px;
+}
+#hud-album-art.loaded { opacity: 0.90; }
+
+/* Audio visualizer canvas — full width of HUD, blends into background */
+#hud-visualizer {
+  width: 600px;
+  height: 90px;
+  display: block;
+  margin-bottom: 10px;
+  /* mask fades out left, right, and top edges for seamless blending */
+  -webkit-mask-image:
+    linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 25%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 25%);
+  mask-composite: intersect;
+}
+
+#hud-track {
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.70);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  text-shadow: 0 0 28px rgba(255,255,255,0.3);
+  transition: opacity 0.6s ease;
+  white-space: nowrap;
+}
+
+#hud-artist {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: opacity 0.6s ease;
+  white-space: nowrap;
+}
+
+/* Debug overlay (toggled by ?debug=1) */
+#debug-overlay {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Inter', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.8;
+  display: none;
+  min-width: 200px;
+}
+#debug-overlay.visible { display: block; }
+#debug-overlay span { color: #00ffcc; }
+
+/* Playback controls */
+#hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+#hud-controls button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  opacity: 0.50;
+}
+
+#hud-controls button:hover {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+#hud-controls button:active {
+  transform: scale(0.90);
+  opacity: 0.7;
+}
+
+/* Prev / Next */
+#btn-prev svg,
+#btn-next svg {
+  width: 32px;
+  height: 32px;
+  fill: rgba(255, 255, 255, 0.85);
+}
+
+/* Play/Pause — focal button */
+#btn-play {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  backdrop-filter: blur(8px);
+  opacity: 0.80 !important;
+  transition: opacity 0.2s ease, transform 0.15s ease, background 0.3s ease, border-color 0.3s ease !important;
+}
+
+#btn-play:hover {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+#btn-play svg {
+  width: 26px;
+  height: 26px;
+  fill: rgba(255, 255, 255, 0.92);
+}
+
+/* Progress bar */
+#hud-progress-rail {
+  width: 600px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+#hud-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px;
+  transition: width 1s linear, background 1.2s ease;
+  will-change: width;
+}
